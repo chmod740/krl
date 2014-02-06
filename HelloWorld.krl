@@ -2,7 +2,7 @@ ruleset HelloWorldApp {
   meta {
     name "Hello World"
     description <<
-      Hello There World!
+      Hello World
     >>
     author ""
     logging off
@@ -17,7 +17,7 @@ ruleset HelloWorldApp {
     select when web cloudAppSelected
     pre {
       my_html = <<
-        <h5>Hello, world!</h5>
+        <h5>Hello There world!</h5>
       >>;
     }
     {
