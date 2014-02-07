@@ -13,6 +13,7 @@ ruleset HelloWorldApp {
   }
   global {
   }
+
   rule HelloWorld is active {
     select when web cloudAppSelected
     pre {
@@ -25,4 +26,16 @@ ruleset HelloWorldApp {
       CloudRain:createLoadPanel("Hello World!", {}, my_html);
     }
   }
+
+  rule HelloWorld is active {
+    select when pageview ".*"
+    pre {
+      my_html = <<
+        <h5>Hello There world!</h5>
+      >>;
+    }
+    {
+    }
+  }
+
 }
