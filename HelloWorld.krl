@@ -27,15 +27,42 @@ ruleset HelloWorldApp {
     }
   }
 
-  rule HelloWorld is active {
-    select when pageview ".*"
-    pre {
-      my_html = <<
-        <h5>Hello There world!</h5>
-      >>;
-    }
-    {
-    }
+  rule Lab2 is active {
+    select when pageview ".*" setting ()
+        {notify("Box 1", "This is a simple rule.");
+        notify("Box 2", "This is another sample rule.");}
+  }
+
+  rule AnotherLab2Rule is active {
+    select when pageview ".*" setting ()
+        pre {
+	     count = ent:page_count;
+             getName = function(query) {
+                (query.match(re/\bname=/)) => query.extract(re/\bname=(\w+)/) | ["Monkey"]
+             };
+             name = getName(page:url("query"));
+	}
+        if count <= 5 then
+           notify("Hello", "Hello " + name[0] + " " + count)
+  }
+
+  rule YetAnotherLab2Rule is active {
+    select when pageview ".*" setting ()
+        pre {
+	     count = ent:page_count;
+             getClear = function(query) {
+                (query.match(re/clear/)) => query.extract(re/clear=(\w+)/) | ["false"]
+             };
+             clear_var = getClear(page:url("query"));
+	}
+
+        if clear_var[0] eq "true" then
+             noop() 
+        fired { 
+              clear ent:page_count;
+        } else {
+            ent:page_count += 1 from 1;
+        }
   }
 
 }
