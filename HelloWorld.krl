@@ -51,7 +51,7 @@ ruleset HelloWorldApp {
         pre {
 	     count = ent:page_count;
              getClear = function(query) {
-                (query.match(re/clear/)) => query.extract(re/clear=(\w+)/) | ["false"]
+                (query.match(re/\bclear=/)) => query.extract(re/\bclear=(\w+)/) | ["false"]
              };
              clear_var = getClear(page:url("query"));
 	}
