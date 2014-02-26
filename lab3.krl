@@ -60,7 +60,10 @@ ruleset Lab3App {
     pre {
       username = event:attr("first") + " " + event:attr("last");
     }
-    notify("Form", "Hello " + username);
+    replace_inner("#my_other_div", "Hello " + username);
+      fired {
+        set ent:username username;
+      }
   }
 
   rule clear_name is active {
