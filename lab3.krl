@@ -76,7 +76,7 @@ ruleset Lab3App {
           clear_var = getClear(page:url("query"));
       }
       if clear_var[0] eq "1" then
-        {notify("Notice", "Clearing name");
+        { notify("Notice", "Clearing name");
         replace_inner("#my_other_div", " ");}
       fired { 
         clear ent:username;
