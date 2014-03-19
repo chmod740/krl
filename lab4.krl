@@ -16,6 +16,9 @@ ruleset rotten_tomatoes {
 			movies = data.pick("$.movies");
 			movies[0]
 		};
+		pick_info = function(info, query_string) {
+			(info.pick(query_string) eq "") => "<i>Not available</i>" | info.pick(query_string);
+		};
 	}
 
 	rule set_up {
@@ -27,13 +30,36 @@ ruleset rotten_tomatoes {
 				margin-left:20px;
 				color:black;
 			}
-			img {margin:20px;}
+			.main-img {margin:20px;}
+			.graphite-flat-button {
+			  position: relative;
+			  vertical-align: top;
+			  width: 80px;
+			  height: 30px;
+			  padding: 5;
+			  font-size: 20px;
+			  color:white;
+			  text-align: center;
+			  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+			  background: #454545;
+			  border: 0;
+			  border-bottom: 2px solid #2f2e2e;
+			  cursor: pointer;
+			  -webkit-box-shadow: inset 0 -2px #2f2e2e;
+			  box-shadow: inset 0 -2px #2f2e2e;
+			}
+			.graphite-flat-button:active {
+			  top: 1px;
+			  outline: none;
+			  -webkit-box-shadow: none;
+			  box-shadow: none;
+			}
 			</style>
 			<link rel="stylesheet" type="text/css" href="mystyle.css">
 			<div id="my_div">
 	        <form id="my_form" onsubmit="return false">
 	        <input type="text" name="query"/>
-	        <input id="submit" type="submit" value="submit">
+	        <input id="submit" type="submit" value="submit" class="graphite-flat-button">
 	        </form>
 	      	</div>
 	     	<div id="my_other_div"><p>What up? How about searching for a movie?</p></div> 
@@ -51,17 +77,16 @@ ruleset rotten_tomatoes {
     	select when web submit "#my_form"
       	pre {
         	info = get_movie_info(event:attr("query"));
-			thumbnail = "http://content7.flixster.com/movie/10/89/43/10894361_pro.jpg";
-			title = info.pick("$.title");
-			release_year = info.pick("$.year");
-			rating = "Not yet";
-			synopsys = info.pick("$.synopsis");
-			critics_rating = "Not yet...";
-			consensus = info.pick("$.critics_consensus");
-
+			profile = pick_info(info, "$..profile");
+			title = pick_info(info, "$.title");
+			release_year = pick_info(info, "$.year");
+			rating = pick_info(info, "$.mpaa_rating");
+			synopsis = pick_info(info, "$.synopsis");
+			critics_rating = pick_info(info, "$..critics_rating");
+			consensus = pick_info(info, "$.critics_consensus");
 			new_html = "
-				<h2>Top Result: Up</h2>
-				<img src=\"" + thumbnail + "\"></img>  
+				<h2>Top Result: <i>"+title+"</i></h2>
+				<img class=\"main-img\" src=\"" + profile + "\"></img>  
 				<p><b>Release Year: </b>"+release_year+" <b>Rating: </b>"+rating+"</p>
 				<p><b>Critics Rating: </b>"+critics_rating+"</p>
 				<p><b>Critics Consensus: </b>"+consensus+"</p> 
