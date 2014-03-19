@@ -11,13 +11,38 @@ ruleset lab7_1 {
         //https://cs.kobj.net/sky/event/4642ECDC-AFA0-11E3-A914-CE78D61CF0AC/1/location/new_current?_rids=b505182x7&lat=0&lang=0
 	}
 	dispatch {}
-	global {}
+	global {
+        r90   = math:pi()/2;      
+        rEk   = 6378;         // radius of the Earth in km
+    }
 
     rule nearby {
         select when location new_current
         pre {
             lat = event:attr("lat");
-            lang = event:attr("lang");
+            lng = event:attr("lng");
+            data = location_data:get_location_data("fs_checkin");
+            city = data.pick("$.city");
+            lat2 = data.pick("$.lat");
+            lng2 = data.pick("$.lng");
+            info = "Event lat/lng: " + lat.as('str') + " / " + lng.as('str') + "<BR>Your lat/lng: " + lat2 + " / " + lng2;
+             
+            rlata = math:deg2rad(lat);
+            rlnga = math:deg2rad(lng);
+            rlatb = math:deg2rad(lat2);
+            rlngb = math:deg2rad(lng2);
+             
+            // distance between two co-ordinates in kilometers
+            dist = math:great_circle_distance(rlnga, r90 - rlata, rlngb, r90 - rlatb, rEk);
+        }
+        if (dist >= 5) then
+            noop();
+        fired { 
+            set app:info info;
+            raise explicit event location_far with key = "location_far" and value = dist.as('str');
+        } else {
+            set app:info info;
+            raise explicit event location_nearby with key = "location_nearby" and value = dist.as('str');
         }
     }
 
@@ -34,27 +59,11 @@ ruleset lab7_1 {
             <div id="my_div"><p>What up?</p></div> 
           >>;
         }
-
         {
             SquareTag:inject_styling();
             CloudRain:createLoadPanel("Lab7", {}, my_html);
+            replace_inner("#my_div", "" + app:info);
         }
-    }
-
-    rule show_fs_location {
-        select when web cloudAppSelected
-        pre {
-            data = location_data:get_location_data("fs_checkin");
-            createdAt = data.pick("$.createdAt");
-            venue = data.pick("$.venue");
-            venue_name = venue.pick("$.name");
-            city = data.pick("$.city");
-            shout = data.pick("$.shout");
-            lat = data.pick("$.lat");
-            lng = data.pick("$.lng");
-            checkin_data = "Created At: " + createdAt + "<BR>Venue Name: " + venue_name + "<BR> City: " + city + "<BR> Shout: " + shout + "<BR> Lat/lng: " + lat + "/" + lng;
-        }
-        replace_inner("#my_div", "" + checkin_data );
     }
 
 }
