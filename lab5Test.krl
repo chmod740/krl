@@ -9,7 +9,10 @@ ruleset lab5 {
 	}
 	dispatch {}
 	global {
-
+        subscription_map = { 
+            "cid1":"1171FF48-B464-11E3-8FF1-87E9E058E56E",
+            "cid2":"0AB70766-B464-11E3-BB02-D5B3E71C24E1"
+        };
 	}
 
 	rule set_up {
@@ -53,6 +56,17 @@ ruleset lab5 {
                 raise pds event new_location_data with key = "fs_checkin" and value = {"lat": lat, "lng": lng, "venue": venue, "city": city, "shout": shout, "createdAt": createdAt};
         }
 	}
+
+    rule dispatcher_rule {
+        select when foursquare checkin foreach subscription_map setting (k,v)
+        pre {
+            //value = v;
+        }
+        {
+            notify("hello","there" + k);
+            event:send(v, "location", "notification");
+        }    
+    }
 
 }
 
