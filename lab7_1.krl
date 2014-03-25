@@ -8,7 +8,7 @@ ruleset lab7_1 {
         use module b505182x5 alias location_data
         use module a169x701 alias CloudRain
         use module a41x186  alias SquareTag
-        //https://cs.kobj.net/sky/event/4642ECDC-AFA0-11E3-A914-CE78D61CF0AC/1/location/new_current?_rids=b505182x7&lat=0&lang=0
+        //https://cs.kobj.net/sky/event/4642ECDC-AFA0-11E3-A914-CE78D61CF0AC/1/location/new_current?_rids=b505182x7&lat=0&lng=0
 	}
 	dispatch {}
 	global {
